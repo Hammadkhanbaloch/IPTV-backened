@@ -1,33 +1,27 @@
+
 import mongoose from "mongoose";
 const schema= new mongoose.Schema(
    {
-    first_name:
+    name:
     {
         type:String,
         required:true,
         unique:true,
         trim:true
     },
-    last_name:
+    description:
     {
         type:String,
         unique:true,
         trim:true
     },
-    email:
+    series_id:
     {
-        type:String,
-        required:true,
-        unique:true,
-        trim:true
-    },
-    password:
-    {
-        type:String,
-        required:true,
-        trim:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Series",
+        required:true
     }
    }
 );
-const user=mongoose.model("User",schema);
-export default user;
+const season=mongoose.model("Season",schema);
+export default season;

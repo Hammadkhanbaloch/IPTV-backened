@@ -1,33 +1,34 @@
+
 import mongoose from "mongoose";
+import genre from "./GenreModel.js";
 const schema= new mongoose.Schema(
    {
-    first_name:
+    name:
     {
         type:String,
         required:true,
         unique:true,
         trim:true
     },
-    last_name:
+    description:
     {
         type:String,
         unique:true,
         trim:true
     },
-    email:
+    genre_id:
     {
-        type:String,
-        required:true,
-        unique:true,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Genre",
         trim:true
     },
-    password:
+    file_id:
     {
-        type:String,
-        required:true,
-        trim:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"File",
+        required:true
     }
    }
 );
-const user=mongoose.model("User",schema);
-export default user;
+const series=mongoose.model("Series",schema);
+export default series;

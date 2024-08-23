@@ -1,15 +1,19 @@
 
 import express from "express";
 import streammodel from "../models/Stream.js";
+import episode from "../models/Episode.js";
+import user from "../models/UserModel.js";
+import mongoose from "mongoose";
+import { httpResponse } from "../utils/httpResponse.js";
 export const createstream=async(req,res)=>
     {
         try
         {
-        const stream=await streammodel.create(req.body);
-        res.status(200).json(stream);
+        const stream=await streammodel.insertMany(req.body);
+        return httpResponse.CREATED(res, stream);
         }catch({message})
         {
-            res.status(400).json({message});
+            return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
         }
     }
 export const getstream=async(req,res)=>
@@ -17,10 +21,10 @@ export const getstream=async(req,res)=>
     try
     {
     const streams=await streammodel.find();
-    res.status(200).json(streams);
+    return httpResponse.SUCCESS(res, streams);
     }catch({message})
     {
-        res.status(400).json({message});
+        return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
     }
 }
 export const getstreamById=async(req,res)=>
@@ -28,28 +32,56 @@ export const getstreamById=async(req,res)=>
     try
     {
         const stream=await streammodel.findById(req.params.id);
-        res.status(200).json(stream);
+        return httpResponse.SUCCESS(res, stream);
     }catch({message})
     {
-        res.status(400).json({message});
+        return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
     }
 }
+export const getepisodeBystreamId=async(req,res)=>
+    {
+        try
+        {
+            const streamid=req.params.id;
+            const result=await episode.findOne({
+                stream_id:new mongoose.Types.ObjectId(streamid),
+            });
+            return httpResponse.SUCCESS(res, result);
+        }catch({message})
+        {
+            return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
+        }
+    }
+    export const getuserBystreamId=async(req,res)=>
+        {
+            try
+            {
+                const streamid=req.params.id;
+                const result=await user.findOne({
+                    stream_id:new mongoose.Types.ObjectId(streamid),
+                });
+                return httpResponse.SUCCESS(res, result);
+            }catch({message})
+            {
+                return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
+            }
+        }
 
 export const updatestreamById=async(req,res)=>
 {
     try {
         const result = await streammodel.findByIdAndUpdate(req.params.id, req.body);
-        res.status(200).json(result);
+        return httpResponse.CREATED(res, result);
     } catch ({ message }) {
-        res.json({ message });
+        return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
     }
 };
 export const deletestream=async (req, res) => {
     try {
         const result = await streammodel.deleteMany();
-        res.status(200).json(result);
+        return httpResponse.SUCCESS(res, result);
     } catch ({ message }) {
-        res.json({ message });
+        return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
     }
 };
 export const deletestreamById=async (req,res)=>
@@ -57,10 +89,10 @@ export const deletestreamById=async (req,res)=>
     try
     {
         const result=streammodel.findByIdAndDelete(req.params.id);
-        res.status(200).json(result);
+        return httpResponse.SUCCESS(res, result);
     }
     catch({message})
     {
-        res.status(400).json({message});
+        return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
     }
 };
