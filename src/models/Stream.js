@@ -8,6 +8,12 @@ const schema= new mongoose.Schema(
         ref:"User" ,
         trim:true
     },
+    episode_id:
+    {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref:"Episode" ,
+        trim:true
+    },
     time: {
         type: Date,
         default: Date.now, // Sets the default to the current date and time

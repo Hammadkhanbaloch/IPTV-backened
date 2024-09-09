@@ -1,7 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from 'cors';
 import env from "./src/config/env.js"
 const app = express();
+app.use(cors({
+    origin: 'http://localhost:3000', // Adjust this if your frontend runs on a different port
+  }));
 app.use(express.json());
 import Userdata from "./src/routes/user.js";
 import filedata from "./src/routes/file.js";

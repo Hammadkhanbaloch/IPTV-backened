@@ -11,7 +11,7 @@ const authentication = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (err) {
-        console.error("Token verification failed:", err); 
+        console.log("Token verification failed:", err); 
         res.status(401).send("Invalid Token, No Access, please try again later");
     }
 };

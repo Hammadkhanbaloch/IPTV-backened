@@ -1,29 +1,33 @@
 import express from "express";
-const data=express.Router();
-import authentication from "../config/Authentication jwt.js";
+const data = express.Router();
+import authentication from "../config/Authentication jwt.js"; // Import the authentication middleware
 import validation from "../MiddlewareValidation/uservalidation.js";
 import {
-    createuser,
-    createuser1,
-    getuser,
-    getuserById,
-    getstreamByUserId,
-    getstreamByUserIdAndStreamId,
-    getepisodeBystreamById,
-    updateuserById,
-    deleteuser,
-    deleteuserById,
-    deletestreamByUserIdAndStreamId
+  createuser,
+  login,
+  getuser,
+  getuserById,
+  getstreamByUserId,
+  getstreamByUserIdAndStreamId,
+  getepisodeBystreamById,
+  updateuserById,
+  deleteuser,
+  deleteuserById,
+  deletestreamByUserIdAndStreamId,
+  getProtectedData, // Import the protected route
 } from "../Services/userservices.js";
-data.post("/register",validation,createuser);
-data.post("/login",validation,createuser1);
-data.get("/",authentication,validation,getuser);
-data.get("/:id",validation,getuserById);
-data.get("/:id/stream",validation,getstreamByUserId);
-data.get("/:userId/stream/:streamId",validation,getstreamByUserIdAndStreamId);
-data.get("/:userId/stream/episode",validation,getepisodeBystreamById);
-data.patch("/",validation,updateuserById);
-data.delete("/",authentication,validation,deleteuser);
-data.delete("/:id",authentication,validation,deleteuserById);
-data.delete("/:userId/stream/:streamId",authentication,validation,deletestreamByUserIdAndStreamId);
+
+data.post("/register",validation, createuser);
+data.post("/login",validation, login);
+data.get("/", authentication, validation, getuser);
+data.get("/:id", authentication, validation, getuserById);
+data.get("/:id/stream", authentication, validation, getstreamByUserId);
+data.get("/:userId/stream/:streamId", authentication, validation, getstreamByUserIdAndStreamId);
+data.get("/:id/stream/episode", authentication, validation, getepisodeBystreamById);
+data.patch("/:id", authentication, validation, updateuserById);
+data.delete("/", validation, deleteuser);
+data.delete("/:id", authentication, validation, deleteuserById);
+data.delete("/:userId/stream/:streamId", authentication, validation, deletestreamByUserIdAndStreamId);
+data.get("/protected", authentication, getProtectedData);
+
 export default data;

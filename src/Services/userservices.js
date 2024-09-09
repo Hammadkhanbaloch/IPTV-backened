@@ -5,37 +5,49 @@ import passwordHash from "password-hash";
 import stream from "../models/Stream.js";
 import jwt from "jsonwebtoken";
 import { httpResponse } from "../utils/httpResponse.js";
-export const createuser=async(req,res)=>
-    {
-        try
-        {
-        const user=await usermodel.insertMany(req.body);
-        req.body.password=passwordHash.generate(req.body.password);
-        return httpResponse.CREATED(res, user);
-        }catch({message})
-        {
-            return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
-        }
+export const createuser = async (req, res) => {
+    try {
+      // Hash the user's password before saving
+      req.body.password = passwordHash.generate(req.body.password);
+      const user = await usermodel.create(req.body); // Corrected to use create instead of insertMany
+      return httpResponse.CREATED(res, user);
+    } catch ({ message }) {
+      return httpResponse.INTERNAL_SERVER_ERROR(res, { message });
     }
-    export const createuser1=async(req,res)=>
-        {
-            try
-            {
-            const user=await usermodel.findOne({
-                email:req.body.email,
-                password:req.body.password
-            });
-            if(!user)
-            {
-                return res.status(401).send("invalid email or password");
-            }
-            const token=jwt.sign({id:user._id},"my_secret")
-            res.send(token);
-            }catch({message})
-            {
-                return httpResponse.INTERNAL_SERVER_ERROR(res, {message});
-            }
-        }
+  };
+  
+  // Login endpoint
+  export const login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await usermodel.findOne({ email });
+  
+      if (!user) {
+        return res.status(401).send("Invalid email or password");
+      }
+  
+      // Verify the password
+      const isPasswordValid = passwordHash.verify(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).send("Invalid email or password");
+      }
+  
+      // Generate a JWT token
+      const token = jwt.sign({ id: user._id }, "my_secret", { expiresIn: "1h" });
+      res.json({ token, user });
+    } catch ({ message }) {
+      return httpResponse.INTERNAL_SERVER_ERROR(res, { message });
+    }
+  };
+  
+  // Example of a protected route using the existing authentication middleware
+  export const getProtectedData = async (req, res) => {
+    try {
+      res.json({ message: "You have access to this protected route" });
+    } catch (error) {
+      return httpResponse.INTERNAL_SERVER_ERROR(res, { message: error.message });
+    }
+  };
 export const getuser=async(req,res)=>
     {
     try
@@ -164,7 +176,7 @@ export const getstreamByUserIdAndStreamId=async(req,res)=>
 export const getepisodeBystreamById=async(req,res)=>
     {
         try{
-            const userId=req.params.userId;
+            const userId=req.params.id;
             const Stream = await stream.aggregate([
                 {
                     $match: {
@@ -175,8 +187,8 @@ export const getepisodeBystreamById=async(req,res)=>
                     $lookup:
                     {
                         from:"episodes",
-                        localField:"_id",
-                        foreignField:"stream_id",
+                        foreignField:"_id",
+                        localField:"episode_id",
                         as:"episodes"
                     }
                 }

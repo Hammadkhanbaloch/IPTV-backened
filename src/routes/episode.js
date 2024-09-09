@@ -11,11 +11,11 @@ import {
     deleteepisode,
     deleteepisodeById
 } from "../Services/episodeServices.js";
-data.post("/",validation,createepisode);
+data.post("/",createepisode);
 data.get("/",authentication,getepisode);
-data.get("/:id",authentication,getepisodeById);
+data.get("/:id",getepisodeById);
 data.get("/:id/stream",authentication,getstreamByEpisodeId);
-data.patch("/",authentication,validation,updateepisodeById);
+data.patch("/:id",validation,updateepisodeById);
 data.delete("/",authentication,deleteepisode);
 data.delete("/:id",authentication,deleteepisodeById);
 export default data;

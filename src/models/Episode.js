@@ -19,19 +19,16 @@ const schema= new mongoose.Schema(
     {
         type:mongoose.Schema.Types.ObjectId,
         ref:"File",
-        required:true
     },
     stream_id:
     {
         type:mongoose.Schema.Types.ObjectId,
         ref:"Stream",
-        required:true
     },
     season_id:
     {
         type:mongoose.Schema.Types.ObjectId,
         ref:"Season",
-        required:true
     }
    }
 );
